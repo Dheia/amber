@@ -1,0 +1,16 @@
+{
+    "name": "october/amber",
+    "description": "Form, List and UI tools",
+    "homepage": "https://github.com/octobercms/amber",
+    "require": {
+        "php": "^8.2",
+        "october/rain": "dev-next as 4.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "October\\Amber\\": "src"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
