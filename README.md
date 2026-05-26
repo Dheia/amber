@@ -34,16 +34,14 @@ The package registers an `AmberServiceProvider` automatically via Laravel's pack
 
 ## Usage
 
-Use the widgets directly from a Laravel controller:
+Build a widget inline in your controller action with `Form::make(...)`, then pass it to the view:
 
 ```php
-use October\Amber\Widgets\Form;
-
 public function edit(Request $request, int $id)
 {
     $user = User::findOrFail($id);
 
-    $form = Form::createIn($this, [
+    $form = Form::make([
         'model' => $user,
         'fields' => '~/resources/amber/user/fields.yaml',
     ]);
@@ -52,11 +50,43 @@ public function edit(Request $request, int $id)
 }
 ```
 
-Render in a Blade view:
+`Form::make([...])` constructs the widget, binds it to the current controller, and returns it. The widget is a regular PHP object after that - pass it to the view, store it in a variable, do whatever you would do with any other object. AJAX handlers defined on the widget (file uploads, inline validation, partial reloads, etc.) are wired up automatically through Larajax - no extra glue code in your action.
+
+Render the widget in a Blade view:
 
 ```blade
 {!! $form->render() !!}
 ```
+
+### How AJAX dispatch works
+
+When the page makes an AJAX request to the same controller, Larajax runs your action body once to rebuild the widget bindings, then dispatches the AJAX handler against them. The action's return value (the view) is discarded on the AJAX pass - only the binding side effect matters. From your perspective, the widget you built in `edit()` is the same widget the AJAX handler operates on.
+
+Note that `view(...)` is **lazy** - it returns a `View` object but does not render any HTML. Blade only compiles the template when the View is converted into a HTTP response. On the AJAX pass, the View is discarded before that ever happens, so calling `view(...)` in your action costs essentially nothing on AJAX requests; only the work you did *before* the return statement (model lookup, `Form::make`, etc.) actually runs.
+
+If your action does work that should *not* run on AJAX requests (mutations, mailers, expensive lookups), guard with Laravel's standard `request()->ajax()`:
+
+```php
+public function edit(Request $request, int $id)
+{
+    $user = User::findOrFail($id);
+
+    $form = Form::make([
+        'model' => $user,
+        'fields' => '~/resources/amber/user/fields.yaml',
+    ]);
+
+    if (!request()->ajax()) {
+        // Do expensive thing
+    }
+
+    return view('users.edit', ['form' => $form]);
+}
+```
+
+### Where `Form::make` resolves the controller
+
+`Form::make` reads the current Larajax controller from the container - the same way `request()` reads the current request or `auth()` reads the current auth manager. Larajax binds this during `callAction`, so `Form::make` works in any controller action that runs through `LarajaxController`. From a non-controller context (a job, a console command), pass the host explicitly with `Form::createIn($host, [...])->bindToController()` instead.
 
 ## Included Widgets
 
