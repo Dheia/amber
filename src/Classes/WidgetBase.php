@@ -22,9 +22,37 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface
     use \Larajax\Traits\ViewComponent;
 
     /**
-     * @var string defaultAlias to identify this widget.
+     * @var object config supplied.
      */
-    protected $defaultAlias = 'widget';
+    public $config;
+
+    /**
+     * __construct bypasses the extendable constructor since register() calls it
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * register the widget
+     */
+    public function register()
+    {
+        $this->config = $this->makeConfig($this->config);
+        $this->viewPath = $this->configPath = $this->guessViewPath('/partials');
+        $this->assetPath = $this->guessViewPath('/assets', true);
+
+        // Prepare assets used by this widget
+        $this->loadAssets();
+
+        // Boot extensions
+        $this->extendableConstruct();
+
+        // Initialize the widget
+        if (!($this->config->noInit ?? false)) {
+            $this->init();
+        }
+    }
 
     /**
      * init the widget, called by the constructor and free from its parameters.
