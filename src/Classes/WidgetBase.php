@@ -1,5 +1,6 @@
 <?php namespace October\Amber\Classes;
 
+use File;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Extension\Extendable;
 use Larajax\Contracts\ViewComponentInterface;
@@ -12,7 +13,6 @@ use Larajax\Contracts\ViewComponentInterface;
  */
 abstract class WidgetBase extends Extendable implements ViewComponentInterface
 {
-    use \October\Amber\Traits\EventEmitter;
     use \October\Amber\Traits\SessionMaker;
     use \October\Amber\Traits\ConfigMaker;
     use \October\Amber\Traits\WidgetMaker;
@@ -40,7 +40,7 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface
     {
         $this->config = $this->makeConfig($this->config);
         $this->viewPath = $this->configPath = $this->guessViewPath('/partials');
-        $this->assetPath = $this->guessViewPath('/assets', true);
+        $this->assetPath = File::localToPublic($this->guessViewPath('/assets'));
 
         // Prepare assets used by this widget
         $this->loadAssets();

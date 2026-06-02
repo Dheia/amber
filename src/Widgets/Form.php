@@ -19,6 +19,7 @@ use UnitEnum;
 class Form extends WidgetBase implements FormElement
 {
     use \October\Amber\Widgets\Form\HasFormWidgets;
+    use \October\Amber\Widgets\Form\HasFormEvents;
     use \October\Amber\Widgets\Form\FieldProcessor;
     use \October\Amber\Widgets\Form\IsFormElement;
     use \October\Amber\Traits\FormModelSaver;
@@ -441,25 +442,8 @@ class Form extends WidgetBase implements FormElement
         $saveData = $this->getSaveDataInternal();
         $this->context = FormField::CONTEXT_REFRESH;
 
-        /**
-         * @event backend.form.beforeRefresh
-         * Called before the form is refreshed, modify the $dataHolder->data property in place
-         *
-         * Example usage:
-         *
-         *     Event::listen('backend.form.beforeRefresh', function ((\Backend\Widgets\Form) $formWidget, (stdClass) $dataHolder) {
-         *         $dataHolder->data = $arrayOfSaveDataToReplaceExistingDataWith;
-         *     });
-         *
-         * Or
-         *
-         *     $formWidget->bindEvent('form.beforeRefresh', function ((stdClass) $dataHolder) {
-         *         $dataHolder->data = $arrayOfSaveDataToReplaceExistingDataWith;
-         *     });
-         *
-         */
         $dataHolder = (object) ['data' => $saveData];
-        $this->fireSystemEvent('backend.form.beforeRefresh', [$dataHolder]);
+        $this->eventBeforeRefresh($dataHolder);
         $saveData = $dataHolder->data;
 
         // Set the form variables and prepare the widget
@@ -467,24 +451,7 @@ class Form extends WidgetBase implements FormElement
         $this->applyFiltersFromModel();
         $this->prepareVars();
 
-        /**
-         * @event backend.form.refreshFields
-         * Called when the form is refreshed, giving the opportunity to modify the form fields
-         *
-         * Example usage:
-         *
-         *     Event::listen('backend.form.refreshFields', function ((\Backend\Widgets\Form) $formWidget, (array) $allFields) {
-         *         $allFields['name']->required = false;
-         *     });
-         *
-         * Or
-         *
-         *     $formWidget->bindEvent('form.refreshFields', function ((array) $allFields) {
-         *         $allFields['name']->required = false;
-         *     });
-         *
-         */
-        $this->fireSystemEvent('backend.form.refreshFields', [$this->allFields]);
+        $this->eventRefreshFields($this->allFields);
 
         // If an array of fields is supplied, update specified fields individually.
         if (($updateFields = post('fields')) && is_array($updateFields)) {
@@ -503,36 +470,7 @@ class Form extends WidgetBase implements FormElement
             $result = ['#'.$this->getId() => $this->makePartial('form')];
         }
 
-        /**
-         * @event backend.form.refresh
-         * Called after the form is refreshed, should return an array of additional result parameters.
-         *
-         * Example usage:
-         *
-         *     Event::listen('backend.form.refresh', function ((\Backend\Widgets\Form) $formWidget, (array) $result) {
-         *         $result['#my-partial-id' => $formWidget->makePartial('$/path/to/custom/backend/_partial.php')];
-         *         return $result;
-         *     });
-         *
-         * Or
-         *
-         *     $formWidget->bindEvent('form.refresh', function ((array) $result) use ((\Backend\Widgets\Form $formWidget)) {
-         *         $result['#my-partial-id' => $formWidget->makePartial('$/path/to/custom/backend/_partial.php')];
-         *         return $result;
-         *     });
-         *
-         */
-        $eventResults = $this->fireSystemEvent('backend.form.refresh', [$result], false);
-
-        foreach ($eventResults as $eventResult) {
-            if (!is_array($eventResult)) {
-                continue;
-            }
-
-            $result = $eventResult + $result;
-        }
-
-        return $result;
+        return $this->eventRefresh($result);
     }
 
     /**
@@ -565,44 +503,7 @@ class Form extends WidgetBase implements FormElement
             return;
         }
 
-        /**
-         * @event backend.form.extendFieldsBefore
-         * Called before the form fields are defined
-         *
-         * Example usage:
-         *
-         *     Event::listen('backend.form.extendFieldsBefore', function ((\Backend\Widgets\Form) $widget) {
-         *         // You should always check to see if you're extending correct model/controller
-         *         if (!$widget->model instanceof \Foo\Example\Models\Bar) {
-         *             return;
-         *         }
-         *
-         *         // Add a new field named example_field
-         *         $widget->addField('example_field', [
-         *             'label' => 'Example field',
-         *             'comment' => 'Your example field',
-         *             'type' => 'text'
-         *         ]);
-         *     });
-         *
-         * Or
-         *
-         *     $formWidget->bindEvent('form.extendFieldsBefore', function () use ((\Backend\Widgets\Form $formWidget)) {
-         *         // You should always check to see if you're extending correct model/controller
-         *         if (!$widget->model instanceof \Foo\Example\Models\Bar) {
-         *             return;
-         *         }
-         *
-         *         // Add a new field named example_field
-         *         $widget->addField('example_field', [
-         *             'label' => 'Example field',
-         *             'comment' => 'Your example field',
-         *             'type' => 'text'
-         *         ]);
-         *     });
-         *
-         */
-        $this->fireSystemEvent('backend.form.extendFieldsBefore');
+        $this->eventExtendFieldsBefore();
 
         // Configure tabs
         $this->allTabs->primary->useConfig((array) $this->tabs);
@@ -648,64 +549,7 @@ class Form extends WidgetBase implements FormElement
             $this->addFieldsFromModel(FormTabs::SECTION_SECONDARY);
         }
 
-        /**
-         * @event backend.form.extendFields
-         * Called after the form fields are defined
-         *
-         * Example usage:
-         *
-         *     Event::listen('backend.form.extendFields', function ((\Backend\Widgets\Form) $widget) {
-         *         // Only for the User controller
-         *         if (!$widget->getController() instanceof \RainLab\User\Controllers\Users) {
-         *             return;
-         *         }
-         *
-         *         // Only for the User model
-         *         if (!$widget->model instanceof \RainLab\User\Models\User) {
-         *             return;
-         *         }
-         *
-         *         // Add an extra birthday field
-         *         $widget->addFields([
-         *             'birthday' => [
-         *                 'label'   => 'Birthday',
-         *                 'comment' => 'Select the users birthday',
-         *                 'type'    => 'datepicker'
-         *             ]
-         *         ]);
-         *
-         *         // Remove a Surname field
-         *         $widget->removeField('surname');
-         *     });
-         *
-         * Or
-         *
-         *     $formWidget->bindEvent('form.extendFields', function () use ((\Backend\Widgets\Form $formWidget)) {
-         *         // Only for the User controller
-         *         if (!$widget->getController() instanceof \RainLab\User\Controllers\Users) {
-         *             return;
-         *         }
-         *
-         *         // Only for the User model
-         *         if (!$widget->model instanceof \RainLab\User\Models\User) {
-         *             return;
-         *         }
-         *
-         *         // Add an extra birthday field
-         *         $widget->addFields([
-         *             'birthday' => [
-         *                 'label'   => 'Birthday',
-         *                 'comment' => 'Select the users birthday',
-         *                 'type'    => 'datepicker'
-         *             ]
-         *         ]);
-         *
-         *         // Remove a Surname field
-         *         $widget->removeField('surname');
-         *     });
-         *
-         */
-        $this->fireSystemEvent('backend.form.extendFields', [new ElementHolder($this->allFields)]);
+        $this->eventExtendFields(new ElementHolder($this->allFields));
 
         // Apply post processing
         $this->processPermissionCheck($this->allFields);

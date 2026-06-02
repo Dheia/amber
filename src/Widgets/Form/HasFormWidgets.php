@@ -3,8 +3,8 @@
 use Lang;
 use SystemException;
 use Backend\Classes\FormField;
-use Backend\Classes\WidgetManager;
-use Backend\Classes\FormWidgetBase;
+use October\Amber\Classes\WidgetManager;
+use October\Amber\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 
 /**
@@ -18,7 +18,7 @@ trait HasFormWidgets
     protected $formWidgets = [];
 
     /**
-     * @var \Backend\Classes\WidgetManager widgetManager
+     * @var \October\Amber\Classes\WidgetManager widgetManager
      */
     protected $widgetManager;
 
@@ -99,7 +99,7 @@ trait HasFormWidgets
             return false;
         }
 
-        if (is_subclass_of($widgetClass, \Backend\Classes\FormWidgetBase::class)) {
+        if (is_subclass_of($widgetClass, \October\Amber\Classes\FormWidgetBase::class)) {
             return true;
         }
 
