@@ -11,6 +11,13 @@
             "October\\Amber\\": "src"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "October\\Amber\\AmberServiceProvider"
+            ]
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }

@@ -224,9 +224,18 @@ trait ViewMaker
         }
 
         if (!array_key_exists($class, $this->viewPathGuessCache)) {
-            $classFolder = strtolower(class_basename($class));
             $classFile = realpath(dirname(File::fromClass($class)));
-            $this->viewPathGuessCache[$class] = $classFile ? $classFile . '/' . $classFolder : null;
+            $classPath = null;
+            if ($classFile) {
+                $classFolder = class_basename($class);
+                $classPath = "{$classFile}/{$classFolder}";
+                if (!is_dir($classPath)) {
+                    $classFolder = strtolower($classFolder);
+                    $classPath = "{$classFile}/{$classFolder}";
+                }
+            }
+
+            $this->viewPathGuessCache[$class] = $classPath;
         }
 
         $guessedPath = $this->viewPathGuessCache[$class];
