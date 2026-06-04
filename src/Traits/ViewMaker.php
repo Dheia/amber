@@ -3,6 +3,7 @@
 use File;
 use Exception;
 use Throwable;
+use October\Amber\Classes\ViewPathGuesser;
 
 // @todo move to Filesystem
 use System;
@@ -26,11 +27,6 @@ trait ViewMaker
     protected $viewPath;
 
     /**
-     * @var array viewPathGuessCache remembers path guesses for performance.
-     */
-    protected $viewPathGuessCache = [];
-
-    /**
      * addViewPath prepends a path on the available view path locations
      * @param string|array $path
      * @return void
@@ -49,6 +45,16 @@ trait ViewMaker
                 ? array_push($this->viewPath, $path)
                 : array_unshift($this->viewPath, $path);
         }
+    }
+
+    /**
+     * addViewPathFrom adds the convention-based partials directory of the given
+     * class to the view path locations. Defaults to appending so the current
+     * class's templates retain priority over the inherited fallbacks.
+     */
+    public function addViewPathFrom(string $class, string $suffix = '/partials', bool $append = true): void
+    {
+        $this->addViewPath($this->guessViewPathFrom($class, $suffix), $append);
     }
 
     /**
@@ -223,22 +229,7 @@ trait ViewMaker
             $class = get_class($class);
         }
 
-        if (!array_key_exists($class, $this->viewPathGuessCache)) {
-            $classFile = realpath(dirname(File::fromClass($class)));
-            $classPath = null;
-            if ($classFile) {
-                $classFolder = class_basename($class);
-                $classPath = "{$classFile}/{$classFolder}";
-                if (!is_dir($classPath)) {
-                    $classFolder = strtolower($classFolder);
-                    $classPath = "{$classFile}/{$classFolder}";
-                }
-            }
-
-            $this->viewPathGuessCache[$class] = $classPath;
-        }
-
-        $guessedPath = $this->viewPathGuessCache[$class];
+        $guessedPath = ViewPathGuesser::guess($class);
         if ($guessedPath !== null) {
             $guessedPath .= $suffix;
         }
