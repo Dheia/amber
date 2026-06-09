@@ -164,6 +164,7 @@ class Form extends WidgetBase implements FormElement
             'useFilterFields',
         ]);
 
+        $this->initFieldsConfig();
         $this->initFormWidgetsConcern();
         $this->initFormTabs();
         $this->validateModel();
@@ -340,6 +341,23 @@ class Form extends WidgetBase implements FormElement
             'field' => $field,
             'formModel' => $this->model
         ]);
+    }
+
+    /**
+     * initFieldsConfig resolves a YAML file path supplied to the `fields` config and
+     * spreads its top-level `fields`, `tabs`, and `secondaryTabs` keys onto the widget.
+     */
+    protected function initFieldsConfig(): void
+    {
+        if (!is_string($this->fields)) {
+            return;
+        }
+
+        $loaded = (array) $this->makeConfig($this->fields);
+
+        $this->fields = $loaded['fields'] ?? [];
+        $this->tabs = $loaded['tabs'] ?? $this->tabs;
+        $this->secondaryTabs = $loaded['secondaryTabs'] ?? $this->secondaryTabs;
     }
 
     /**
