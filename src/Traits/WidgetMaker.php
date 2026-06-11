@@ -53,7 +53,7 @@ trait WidgetMaker
      * The fieldConfig is a field name, an array of config or a FormField object.
      * @param string $class
      * @param mixed $fieldConfig
-     * @param array $widgetConfig
+     * @param array|object $widgetConfig
      * @return \October\Amber\Classes\FormWidgetBase
      */
     public function makeFormWidget($class, $fieldConfig = [], $widgetConfig = [])
@@ -84,6 +84,9 @@ trait WidgetMaker
             $formField = $fieldConfig;
         }
 
-        return new $class($controller, $formField, $widgetConfig);
+        return $class::createIn($controller, [
+            'formField' => $formField,
+            ...(array) $widgetConfig
+        ]);
     }
 }

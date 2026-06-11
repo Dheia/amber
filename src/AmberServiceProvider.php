@@ -19,5 +19,9 @@ class AmberServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        app('system.widgets')->registerFormWidgets(function ($manager) {
+            $manager->registerFormWidget(\October\Amber\FormWidgets\Relation::class, 'relation');
+            $manager->registerFormWidget(\October\Amber\FormWidgets\FileUpload::class, 'fileupload');
+        });
     }
 }
