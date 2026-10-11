@@ -52,6 +52,7 @@ import { registerRepeaterBuilder } from './formwidgets/repeater/repeater-builder
 // Shared classes for programmatic use
 export { Popover } from './controls/popover/popover.js';
 export { Popup } from './controls/popup/popup.js';
+export { PopupStacker } from './controls/popup/popup-stacker.js';
 export { default as DragScroll } from './controls/drag-scroll/drag-scroll.js';
 
 // Framework instances that have completed registration

@@ -1,0 +1,123 @@
+/*
+ * Popup stacker
+ *
+ * Pushes open popups back, scaled and offset, when another popup opens on
+ * top of them, and pulls the next one forward when the top popup closes.
+ * Registered as jax.popupStacker.
+ *
+ * Ported from October CMS (popup.stacker.js) as vanilla JS. The pushed-back
+ * z-index derives from --oc-zindex-modal-background (October hardcodes 490).
+ */
+'use strict';
+
+export class PopupStacker
+{
+    constructor() {
+        document.addEventListener('hidden.bs.modal', (ev) => this.onPopupHidden(ev));
+        document.addEventListener('shown.bs.modal', (ev) => this.onPopupShown(ev));
+
+        // Only the document-level announcement, not the bubbling popup:show element event
+        document.addEventListener('popup:show', (ev) => {
+            if (ev.target === document) {
+                this.onPopupShowing(ev);
+            }
+        });
+    }
+
+    onPopupHidden(ev) {
+        this.redrawStack();
+        this.pullForward();
+    }
+
+    onPopupShowing(ev) {
+        document.activeElement && document.activeElement.blur();
+        this.redrawStack(true);
+    }
+
+    onPopupShown(ev) {
+        var el = ev.target;
+
+        if (!el.dataset.popupStackId) {
+            el.dataset.popupStackId = this.generateUniqueId();
+        }
+
+        this.redrawStack();
+    }
+
+    pullForward() {
+        const el = this.getFirstPopup();
+        if (!el) {
+            return;
+        }
+
+        const content = el.querySelector('.modal-content');
+        if (content) {
+            content.style.transform = '';
+            content.style.transformOrigin = '';
+            el.style.zIndex = '';
+
+            // Wait for transition end (.3s)
+            setTimeout(() => {
+                if (content) {
+                    content.style.transition = '';
+                }
+            }, 350);
+        }
+
+        const backdrop = el.previousElementSibling;
+        if (backdrop && backdrop.classList.contains('popup-backdrop')) {
+            backdrop.style.zIndex = '';
+        }
+    }
+
+    redrawStack(isEarly) {
+        let count = 0;
+        const baseZIndex = this.getBaseZIndex();
+
+        this.getAllPopups().forEach((el) => {
+            count++;
+
+            // Push back popups before a new popup spawns
+            let offset = count;
+            if (!isEarly) {
+                offset--;
+
+                if (count === 1) {
+                    return;
+                }
+            }
+
+            const content = el.querySelector('.modal-content');
+            if (content && !content.classList.contains('popup-loading-indicator')) {
+                content.style.transform = `scale(.9) translate(-${2*offset}rem, -${50*offset}px)`;
+                content.style.transformOrigin = 'top left';
+                content.style.transition = 'all .3s';
+                el.style.zIndex = (baseZIndex - offset);
+            }
+
+            const backdrop = el.previousElementSibling;
+            if (backdrop && backdrop.classList.contains('popup-backdrop')) {
+                backdrop.style.zIndex = (baseZIndex - offset);
+            }
+        });
+    }
+
+    getFirstPopup() {
+        return this.getAllPopups()[0];
+    }
+
+    getAllPopups() {
+        return Array.from(document.querySelectorAll('.modal.show[data-popup-stack-id]')).reverse();
+    }
+
+    // Matches the popup backdrop z-index, which sits 10 below the modal background layer
+    getBaseZIndex() {
+        const layer = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--oc-zindex-modal-background'), 10);
+
+        return isNaN(layer) ? 490 : layer - 10;
+    }
+
+    generateUniqueId() {
+        return "popupid-" + Math.floor(Math.random() * new Date().getTime());
+    }
+}

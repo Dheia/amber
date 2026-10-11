@@ -1,19 +1,222 @@
 /*
  * Popup control styles
  *
- * The dialog itself is styled by Bootstrap 5; these rules cover the
- * loading state shown while the handler contents load.
+ * Ported from October CMS (popup.less). October styles every Bootstrap modal;
+ * these rules are scoped to the popup and its loading backdrop so other modals
+ * in the application keep Bootstrap's styling.
  */
 
 .control-popup {
-    .control-popup-loading {
-        display: block;
-        padding: 1.5rem;
-        text-align: center;
-        opacity: .5;
+    z-index: var(--oc-zindex-modal);
 
-        &:before {
-            content: "\2026";
+    .modal-content {
+        .modal-header {
+            background: transparent;
+            color: var(--bs-heading-color);
+            border-top-right-radius: 4px;
+            border-top-left-radius: 4px;
+            padding: 15px 20px;
+            border-bottom: var(--oc-popup-border);
+
+            h4 {
+                font-weight: normal;
+                font-size: 18px;
+            }
+        }
+
+        .modal-body {
+            padding: 20px 20px 0 20px;
+
+            > p:last-child {
+                margin-bottom: 20px;
+            }
+
+            &.modal-no-header {
+                padding-top: 20px;
+            }
+
+            &.modal-no-footer {
+                padding-bottom: 20px;
+            }
+        }
+
+        .modal-footer {
+            background: transparent;
+            border: none;
+            margin-top: 0;
+            padding: 0 20px 20px 20px;
+            justify-content: flex-start;
+
+            > .pull-right {
+                margin-left: auto;
+            }
+
+            > *:first-child {
+                margin-left: 0;
+            }
+
+            > *:last-child {
+                margin-right: 0;
+            }
+
+            .btn-link {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
         }
     }
+
+    .modal-dialog {
+        max-width: 598px;
+
+        &.size-adaptive {
+            max-width: 100%;
+            padding-right: 50px;
+            padding-left: 50px;
+        }
+
+        &.adaptive-height {
+            height: 100%;
+            min-height: 600px;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-top: 50px;
+            padding-bottom: 50px;
+
+            .modal-content {
+                height: 100%;
+            }
+        }
+
+        @media (min-width: 768px) {
+            &.size-tiny { max-width: 300px; }
+            &.size-small { max-width: 400px; }
+        }
+
+        @media (min-width: 992px) {
+            &.size-large { max-width: 750px; }
+            &.size-huge { max-width: 900px; }
+            &.size-giant { max-width: 982px; }
+        }
+
+        @media (max-width: 768px) {
+            &.size-adaptive {
+                max-width: auto;
+                padding: 5px 0;
+                margin: 0;
+            }
+        }
+
+        &.size-400 { max-width: 400px; }
+        &.size-450 { max-width: 450px; }
+        &.size-500 { max-width: 500px; }
+        &.size-550 { max-width: 550px; }
+        &.size-600 { max-width: 600px; }
+        &.size-650 { max-width: 650px; }
+        &.size-700 { max-width: 700px; }
+        &.size-750 { max-width: 750px; }
+        &.size-800 { max-width: 800px; }
+        &.size-850 { max-width: 850px; }
+        &.size-900 { max-width: 900px; }
+        &.size-950 { max-width: 950px; }
+        &.size-1000 { max-width: 1000px; }
+        &.size-1050 { max-width: 1050px; }
+        &.size-1100 { max-width: 1100px; }
+        &.size-1200 { max-width: 1200px; }
+        &.size-1400 { max-width: 1400px; }
+        &.size-auto {
+            max-width: auto;
+            padding: 5px 0;
+            margin: 0;
+        }
+    }
+
+    &.fade {
+        &:not(.show) {
+            pointer-events: none;
+        }
+
+        .modal-dialog {
+            opacity: 0;
+            transition: all 0.3s, width 0s;
+            transform: scale(0.7);
+        }
+    }
+
+    &.fade.show {
+        .modal-dialog {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
+/* The loading indicator is also a .modal-content, inside the backdrop */
+:is(.control-popup, .popup-backdrop) .modal-content {
+    border: var(--oc-popup-border);
+    border-radius: 8px;
+    box-shadow: 0 0 32px rgba(67, 86, 100, 0.2);
+    background: var(--oc-popup-bg);
+
+    &.popup-shaking {
+        animation: popup-shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+    }
+}
+
+.popup-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: calc(var(--oc-zindex-modal-background) - 10);
+    background-color: rgba(0, 0, 0, var(--bs-backdrop-opacity));
+    opacity: 1;
+
+    .popup-loading-indicator {
+        background: var(--oc-popup-bg);
+        display: block;
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 130px;
+        left: 50%;
+        margin-left: -50px;
+        transition: all 0.3s, width 0s;
+        transform: scale(0.7);
+        opacity: 0;
+
+        &:after {
+            --loader-size: 50px;
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: var(--loader-size);
+            height: var(--loader-size);
+            margin-top: calc(var(--loader-size) / -2);
+            margin-left: calc(var(--loader-size) / -2);
+            border: 4px solid var(--oc-primary-border);
+            border-top-color: var(--oc-accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+    }
+
+    &.loading .popup-loading-indicator {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Popup animations */
+
+@keyframes popup-shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
 }

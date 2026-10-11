@@ -13,6 +13,8 @@
  */
 'use strict';
 
+import { Popup } from '../popup/popup.js';
+
 export function registerRowlink(jax) {
     jax.registerControl('rowlink', class extends jax.ControlBase {
         connect() {
@@ -85,8 +87,7 @@ export function registerRowlink(jax) {
                     jax.request(link);
                 }
                 else if (isPopup) {
-                    // Non-bubbling so the popup control fires without re-triggering this row handler.
-                    link.dispatchEvent(new MouseEvent('click', { bubbles: false, cancelable: true }));
+                    Popup.fromElement(link);
                 }
                 else if (ev.ctrlKey || ev.metaKey) {
                     window.open(href);
