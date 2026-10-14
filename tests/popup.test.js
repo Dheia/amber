@@ -217,6 +217,17 @@ describe('popup stacker', () => {
         expect(jax.popupStacker.getFirstPopup().textContent).toContain('Second');
     });
 
+    test('places pushed-back popups just below the modal background layer', () => {
+        document.documentElement.style.setProperty('--oc-zindex-modal-background', '2000');
+
+        const first = Popup.open({ content: '<div>First</div>' });
+        Popup.open({ content: '<div>Second</div>' });
+
+        expect(first.container.style.zIndex).toBe('1999');
+
+        document.documentElement.style.removeProperty('--oc-zindex-modal-background');
+    });
+
     test('pulls the earlier popup forward when the top one closes', () => {
         const first = Popup.open({ content: '<div>First</div>' });
         const second = Popup.open({ content: '<div>Second</div>' });

@@ -172,7 +172,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: calc(var(--oc-zindex-modal-background) - 10);
+    z-index: var(--oc-zindex-modal-background);
     background-color: rgba(0, 0, 0, var(--bs-backdrop-opacity));
     opacity: 1;
 

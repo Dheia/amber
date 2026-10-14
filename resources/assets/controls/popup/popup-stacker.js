@@ -4,9 +4,6 @@
  * Pushes open popups back, scaled and offset, when another popup opens on
  * top of them, and pulls the next one forward when the top popup closes.
  * Registered as jax.popupStacker.
- *
- * Ported from October CMS (popup.stacker.js) as vanilla JS. The pushed-back
- * z-index derives from --oc-zindex-modal-background (October hardcodes 490).
  */
 'use strict';
 
@@ -110,11 +107,11 @@ export class PopupStacker
         return Array.from(document.querySelectorAll('.modal.show[data-popup-stack-id]')).reverse();
     }
 
-    // Matches the popup backdrop z-index, which sits 10 below the modal background layer
+    // Matches the popup backdrop z-index, the modal background layer
     getBaseZIndex() {
         const layer = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--oc-zindex-modal-background'), 10);
 
-        return isNaN(layer) ? 490 : layer - 10;
+        return isNaN(layer) ? 1050 : layer;
     }
 
     generateUniqueId() {

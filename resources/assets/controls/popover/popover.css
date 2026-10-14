@@ -4,7 +4,7 @@
 
 .control-popover {
     position: absolute;
-    z-index: var(--oc-zindex-popover, 1000);
+    z-index: var(--oc-zindex-popover, 1070);
     min-width: 200px;
     padding: .75rem;
     background: var(--oc-popup-bg);

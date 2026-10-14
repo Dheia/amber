@@ -38,10 +38,9 @@
     // 300-400    - Secondary layer (full screen)
     // 400-500    - Secondary menus / dropdowns
     //
-    // 500-600    - Tertiary layer (popups)
-    // 600-700    - Tertiary menus / dropdowns
+    // 1000-1100  - Tertiary layer (popups, popovers, dropdowns)
     //
-    // 1000-10000 - Reserved for frequency manager
+    // 1100-10000 - Reserved for frequency manager
     //
     // 10000+     - Always on top
     */
@@ -62,10 +61,10 @@
     --oc-zindex-fullscreen:        300;
 
     /* Tertiary */
-    --oc-zindex-modal-background:  500;
-    --oc-zindex-modal:             600;
-    --oc-zindex-popover:           600;
-    --oc-zindex-dropdown:          600;
+    --oc-zindex-dropdown:          1000;
+    --oc-zindex-modal-background:  1050;
+    --oc-zindex-modal:             1055;
+    --oc-zindex-popover:           1070;
 
     /* Always on top */
     --oc-zindex-inspector:         10000;
