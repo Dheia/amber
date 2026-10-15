@@ -46,6 +46,7 @@ import { registerListStructureWidget } from './widgets/liststructure/liststructu
 
 // Form widgets
 import { registerFileUpload } from './formwidgets/fileupload/fileupload.js';
+import { registerRelationQuickCreate } from './formwidgets/relation/relation-quick-create.js';
 import { registerRepeaterAccordion } from './formwidgets/repeater/repeater-accordion.js';
 import { registerRepeaterBuilder } from './formwidgets/repeater/repeater-builder.js';
 
@@ -108,6 +109,7 @@ export function registerUi(jax) {
 
     // Form widgets
     registerFileUpload(jax);
+    registerRelationQuickCreate(jax);
     registerRepeaterAccordion(jax);
     registerRepeaterBuilder(jax);
 

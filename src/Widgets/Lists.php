@@ -55,7 +55,7 @@ class Lists extends WidgetBase implements ListElement
     public $recordUrl;
 
     /**
-     * @var string recordOnClick event for each record row. Replace :id with the record id.
+     * @var string recordOnClick event for each record row, with :id replaced by the record id, or "popup" / "popup@context" to open the onLoadPopupForm handler.
      */
     public $recordOnClick;
 
@@ -753,6 +753,17 @@ class Lists extends WidgetBase implements ListElement
         }
 
         $recordOnClick = $this->recordOnClick;
+
+        // Popup form shorthand, the controller provides the onLoadPopupForm handler
+        if ($recordOnClick === 'popup' || str_starts_with($recordOnClick, 'popup@')) {
+            if (str_contains($recordOnClick, '@')) {
+                $recordOnClickContext = explode('@', $recordOnClick)[1];
+                $recordOnClick = "jax.listOnLoadForm(':id', '{$recordOnClickContext}')";
+            }
+            else {
+                $recordOnClick = "jax.listOnLoadForm(':id')";
+            }
+        }
 
         if ($this->pivotMode) {
             $recordOnClick = RouterHelper::replaceParameters($record->pivot, $recordOnClick);

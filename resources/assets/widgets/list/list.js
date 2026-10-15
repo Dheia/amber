@@ -6,13 +6,28 @@
  *
  * JavaScript API:
  * jax.fetchControl(element, 'listwidget')
+ * jax.listOnLoadForm(recordId, context) - opens the onLoadPopupForm handler in a popup,
+ *   used by the recordOnClick "popup" shorthand
  *
  * Ported from October CMS (october.list.js) as vanilla JS. Not yet ported:
  * drag-scrollable headers (native horizontal scrolling applies instead).
  */
 'use strict';
 
+import { Popup } from '../../controls/popup/popup.js';
+
 export function registerListWidget(jax) {
+    // List helper, opens a record form in a popup from the controller's onLoadPopupForm handler
+    jax.listOnLoadForm = function(recordId, context) {
+        Popup.open({
+            handler: 'onLoadPopupForm',
+            extraData: {
+                form_record_id: recordId,
+                form_context: context || null
+            }
+        });
+    };
+
     jax.registerControl('listwidget', class extends jax.ControlBase {
         init() {
             this.checkboxSelector = '.list-checkbox input[type="checkbox"]';

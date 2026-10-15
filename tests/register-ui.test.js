@@ -21,6 +21,7 @@ const CONTROL_IDS = [
     'filterwidget',
     'liststructurewidget',
     'fileupload',
+    'relation-quick-create',
     'repeateraccordion',
     'repeaterbuilder',
 ];
