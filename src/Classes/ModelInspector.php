@@ -106,6 +106,34 @@ class ModelInspector
     }
 
     /**
+     * isJsonable returns true if the attribute stores a JSON encoded value, from the model's
+     * jsonable definition or an array, json, object or collection cast.
+     */
+    public function isJsonable($model, $attribute): bool
+    {
+        $model = $this->makeModel($model);
+
+        if (!is_object($model)) {
+            return false;
+        }
+
+        if (method_exists($model, 'isJsonable')) {
+            return $model->isJsonable($attribute);
+        }
+
+        return method_exists($model, 'hasCast') && $model->hasCast($attribute, [
+            'array',
+            'json',
+            'object',
+            'collection',
+            'encrypted:array',
+            'encrypted:collection',
+            'encrypted:json',
+            'encrypted:object'
+        ]);
+    }
+
+    /**
      * getRelationSimpleValue returns a relation value directly from its attribute:
      * the related key for singular relations, an array of related keys for
      * multi relations. Mirrors October Rain's relation getSimpleValue methods.

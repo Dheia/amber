@@ -167,7 +167,10 @@ class Relation extends FormWidgetBase
             }
         }
         else {
-            $relationObject->addDefinedConstraintsToQuery($query);
+            // Plain Eloquent relations have no defined constraints to apply
+            if (method_exists($relationObject, 'addDefinedConstraintsToQuery')) {
+                $relationObject->addDefinedConstraintsToQuery($query);
+            }
 
             // Reset any orders that come from the definition since they may
             // reference the pivot table that isn't included in this query
