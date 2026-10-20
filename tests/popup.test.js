@@ -238,3 +238,24 @@ describe('popup stacker', () => {
         expect(jax.popupStacker.getFirstPopup()).toBe(first.container);
     });
 });
+
+describe('popup bindToPopups', () => {
+    test('passes the variables on to popups opened inside a bound popup', () => {
+        document.body.innerHTML = '<div id="container"><a id="outer-trigger"></a></div>';
+        Popup.bindToPopups('#container', { file_id: 7 });
+
+        const outer = Popup.fromElement(document.getElementById('outer-trigger'), {
+            content: '<div><form id="outer-form"><a id="inner-trigger"></a></form></div>'
+        });
+
+        expect(outer.container.querySelectorAll('#outer-form input[name="file_id"]')).toHaveLength(1);
+        expect(outer.container.querySelector('#outer-form input[name="file_id"]').value).toBe('7');
+
+        const inner = Popup.fromElement(outer.container.querySelector('#inner-trigger'), {
+            content: '<div><form id="inner-form"></form></div>'
+        });
+
+        expect(inner.container.querySelectorAll('#inner-form input[name="file_id"]')).toHaveLength(1);
+        expect(outer.container.querySelectorAll('#outer-form input[name="file_id"]')).toHaveLength(1);
+    });
+});

@@ -20,6 +20,7 @@
 /* Controls */
 @import "./controls/datepicker/datepicker.css";
 @import "./controls/loader-container/loader-container-control.css";
+@import "./controls/load-indicator/load-indicator.css";
 @import "./controls/search-input/search-input-control.css";
 @import "./controls/custom-select/custom-select-control.css";
 @import "./controls/checkbox/checkbox-control.css";

@@ -517,18 +517,23 @@ export class Popup
     static bindToPopups(container, vars) {
         resolveElements(container).forEach((el) => {
             el.addEventListener('popup:show', (ev) => {
-                var form = ev.detail.modal && ev.detail.modal.querySelector('form');
-                if (!form) {
-                    return;
+                var modal = ev.detail.modal,
+                    form = modal && modal.querySelector('form');
+
+                if (form) {
+                    Object.entries(vars).forEach(([name, value]) => {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = name;
+                        input.value = value;
+                        form.prepend(input);
+                    });
                 }
 
-                Object.entries(vars).forEach(([name, value]) => {
-                    var input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = name;
-                    input.value = value;
-                    form.prepend(input);
-                });
+                // Popups spawned within this popup need the variables too
+                if (modal) {
+                    Popup.bindToPopups(modal, vars);
+                }
             });
         });
     }

@@ -6,19 +6,34 @@
  * - data-linkable - reflects the active tab in the URL hash and opens the
  *   tab matching the hash on page load
  *
- * Tabs marked with the `tab-lazy` class load their pane contents through the
- * anchor's data-tab-lazy-handler on first activation.
+ * Events:
+ * - tab:shown - dispatched on a tab anchor after its tab is shown
+ * - tab:shown-linkable - dispatched on the tab anchor opened from the URL hash
+ *
+ * JavaScript API:
+ * jax.fetchControl(element, 'tab').goToIndex(index)
+ * jax.fetchControl(element, 'tab').goToElement(element) - shows the tab containing the element
+ *
+ * The first invalid field of a failed AJAX validation has its tab shown and is focused.
  */
 'use strict';
 
 export function registerTab(jax) {
     jax.registerControl('tab', class extends jax.ControlBase {
         init() {
-            this.nav = this.element.querySelector('ul.nav-tabs');
-            this.content = this.element.querySelector('.tab-content');
+            this.invalidElement = false;
         }
 
         connect() {
+            this.nav = this.element.querySelector('ul.nav-tabs');
+            this.content = this.element.querySelector('.tab-content');
+
+            if (!this.nav || !this.content) {
+                return;
+            }
+
+            this.tabs().forEach((li) => this.initTab(li));
+
             this.listen('click', this.onClick);
 
             if (this.element.hasAttribute('data-linkable') && location.hash) {
@@ -46,6 +61,23 @@ export function registerTab(jax) {
             this.activate(anchor.closest('li'));
         }
 
+        initTab(li) {
+            const tabIndex = this.tabs().indexOf(li),
+                anchor = li.querySelector('a'),
+                pane = this.panes()[tabIndex];
+
+            if (!anchor || !pane) {
+                return;
+            }
+
+            // Auto generate the tab pane identifier
+            if (!pane.id) {
+                pane.id = 'tab-' + tabIndex + '-' + Date.now();
+            }
+
+            anchor.dataset.target = '#' + pane.id;
+        }
+
         tabs() {
             return [...this.nav.children].filter((el) => el.matches('li'));
         }
@@ -58,7 +90,7 @@ export function registerTab(jax) {
             const tabs = this.tabs(),
                 index = tabs.indexOf(li);
 
-            if (index === -1) {
+            if (index === -1 || li.classList.contains('active')) {
                 return;
             }
 
@@ -66,45 +98,87 @@ export function registerTab(jax) {
             this.panes().forEach((pane, i) => pane.classList.toggle('active', i === index));
 
             const anchor = li.querySelector('a');
-
-            // Lazy contents load on first activation
-            if (li.classList.contains('tab-lazy')) {
-                this.loadLazyTab(li, anchor, this.panes()[index]);
+            if (!anchor) {
+                return;
             }
 
+            jax.Events.dispatch('tab:shown', { target: anchor });
+
             // Reflect the active tab in the URL
-            if (this.element.hasAttribute('data-linkable') && anchor && anchor.hash) {
+            if (this.element.hasAttribute('data-linkable') && anchor.hash && !this.invalidElement) {
                 history.replaceState(null, '', anchor.hash);
             }
         }
 
-        loadLazyTab(li, anchor, pane) {
-            const handler = anchor && anchor.dataset.tabLazyHandler;
-            if (!handler || !pane) {
+        showHashedAnchorTab() {
+            const anchor = this.nav.querySelector('a[href="' + CSS.escape(location.hash) + '"], a[name="' + CSS.escape(location.hash.slice(1)) + '"]');
+            if (!anchor) {
                 return;
             }
 
-            jax.request(anchor, handler, {
-                data: {
-                    target: pane.id ? '#' + pane.id : null,
-                    name: anchor.dataset.tabName,
-                    section: anchor.dataset.tabSection
-                },
-                success: (data) => {
-                    if (pane.id && typeof data['#' + pane.id] === 'string') {
-                        pane.innerHTML = data['#' + pane.id];
-                    }
-                    li.classList.remove('tab-lazy');
-                    pane.classList.remove('is-lazy');
-                }
-            });
+            this.activate(anchor.closest('li'));
+
+            // Next tick
+            setTimeout(() => {
+                jax.Events.dispatch('tab:shown-linkable', { target: anchor });
+            }, 1);
         }
 
-        showHashedAnchorTab() {
-            const anchor = this.nav.querySelector('a[href="' + CSS.escape(location.hash) + '"], a[name="' + CSS.escape(location.hash.slice(1)) + '"]');
-            if (anchor) {
-                this.activate(anchor.closest('li'));
+        goToIndex(index) {
+            const li = this.tabs()[index];
+            if (li) {
+                this.activate(li);
             }
         }
+
+        goToPane(pane) {
+            if (!pane) {
+                return false;
+            }
+
+            pane.classList.remove('collapsed');
+
+            const tabIndex = this.panes().indexOf(pane);
+            if (tabIndex === -1) {
+                return false;
+            }
+
+            this.goToIndex(tabIndex);
+
+            return true;
+        }
+
+        goToInvalidElement(element) {
+            this.invalidElement = true;
+            const result = this.goToPane(element.closest('.tab-pane'));
+            this.invalidElement = false;
+            return result;
+        }
+
+        goToElement(element) {
+            return this.goToPane(element.closest('.tab-pane'));
+        }
+    });
+
+    // GLOBAL EVENTS
+    // ============================
+
+    // Detect invalid fields, focus the tab
+    addEventListener('ajax:invalid-field', function(ev) {
+        const { element, isFirst } = ev.detail || {};
+        if (!isFirst || !element) {
+            return;
+        }
+
+        ev.preventDefault();
+
+        const tabElement = element.closest('[data-control~="tab"]'),
+            tab = tabElement ? jax.fetchControl(tabElement, 'tab') : null;
+
+        if (tab) {
+            tab.goToInvalidElement(element);
+        }
+
+        element.focus();
     });
 }

@@ -21,6 +21,7 @@
  *
  * JavaScript API:
  * new jax.InputPreset(element, { inputPreset: '#name', inputPresetType: 'file' })
+ * jax.InputPreset.getInstance(element) - the preset created for a data-input-preset element
  */
 'use strict';
 
@@ -28,6 +29,9 @@ import { InputPresetEngine } from './input-preset-engine.js';
 
 // Framework instance bound by registerInputPreset
 let jax = null;
+
+// Input preset instances created for data-input-preset elements
+const instances = new WeakMap();
 
 export class InputPreset {
     static DEFAULTS = {
@@ -100,6 +104,10 @@ export class InputPreset {
             self.cancelled = true;
         });
     }
+
+    static getInstance(element) {
+        return instances.get(element) || null;
+    }
 }
 
 export function registerInputPreset(framework) {
@@ -123,7 +131,7 @@ export function registerInputPreset(framework) {
                 }
             }
 
-            new InputPreset(element, options);
+            instances.set(element, new InputPreset(element, options));
         });
     });
 }

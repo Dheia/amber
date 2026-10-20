@@ -40,6 +40,7 @@ import { registerCheckboxRange } from './controls/checkbox/checkbox-range.js';
 import { registerDropdown } from './controls/dropdown/dropdown.js';
 
 // Widgets
+import { registerFormWidget } from './widgets/form/form.js';
 import { registerListWidget } from './widgets/list/list.js';
 import { registerFilterWidget } from './widgets/filter/filter.js';
 import { registerListStructureWidget } from './widgets/liststructure/liststructure.js';
@@ -54,6 +55,7 @@ import { registerRepeaterBuilder } from './formwidgets/repeater/repeater-builder
 export { Popover } from './controls/popover/popover.js';
 export { Popup } from './controls/popup/popup.js';
 export { PopupStacker } from './controls/popup/popup-stacker.js';
+export { LoadIndicator } from './controls/load-indicator/load-indicator.js';
 export { default as DragScroll } from './controls/drag-scroll/drag-scroll.js';
 
 // Framework instances that have completed registration
@@ -103,6 +105,7 @@ export function registerUi(jax) {
     registerDropdown(jax);
 
     // Widgets
+    registerFormWidget(jax);
     registerListWidget(jax);
     registerFilterWidget(jax);
     registerListStructureWidget(jax);
