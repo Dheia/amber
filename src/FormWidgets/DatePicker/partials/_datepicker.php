@@ -20,6 +20,7 @@
         <?php if ($hoursOnly): ?>data-hours-only="1"<?php endif ?>
         <?php if ($defaultTimeMidnight): ?>data-default-time-midnight="1"<?php endif ?>
         data-show-week-number="<?= $showWeekNumber ? 'true' : 'false' ?>"
+        data-timezone="<?= e($timezone) ?>"
         <?php if (!$useTimezone): ?>data-ignore-timezone<?php endif ?>
     >
 

@@ -3,8 +3,6 @@
  *
  * Data attributes:
  * - data-control="repeateraccordion" - enables the control on an element
- *
- * Ported from October CMS (repeater.accordion.js) as vanilla JS.
  */
 'use strict';
 

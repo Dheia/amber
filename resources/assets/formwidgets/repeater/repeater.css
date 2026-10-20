@@ -1,7 +1,5 @@
 /*
  * Repeater form widget
- *
- * Ported from October CMS (formwidgets/repeater/assets/css).
  */
 @import "_repeater_item.css";
 @import "_repeater_group.css";

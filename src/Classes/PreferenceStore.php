@@ -3,12 +3,8 @@
 use Illuminate\Support\Facades\Session;
 
 /**
- * PreferenceStore is a session-backed store for widget user preferences.
- *
- * October CMS stores these in the backend user preferences database model
- * (Backend\Models\UserPreference). Larajax UI runs standalone, so preferences are
- * kept in the session by default. Override `getPreferenceStorage` on the
- * consuming class to supply a durable per-user store.
+ * PreferenceStore is a session-backed store for widget user preferences, replaced by
+ * overriding `getPreferenceStorage` on the consuming class.
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges

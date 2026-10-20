@@ -1,12 +1,10 @@
 /*
  * Clockpicker
  *
- * A jQuery-free fork of ClockPicker v0.0.7 (Wang Shenwei, MIT), the abandoned
- * jQuery plugin October vendors for its time picker. The clock-face SVG and
- * geometry are ported verbatim; the jQuery DOM/event layer is rewritten with
- * native APIs so the controls layer stays jQuery-free.
+ * A jQuery-free fork of ClockPicker v0.0.7 (Wang Shenwei, MIT). The clock-face
+ * SVG and geometry are unchanged; the DOM and event layer uses native APIs.
  *
- * Programmatic API (mirrors the subset October's datepicker control uses):
+ * Programmatic API:
  *
  *     const picker = new Clockpicker(inputEl, {
  *         twelvehour: false,

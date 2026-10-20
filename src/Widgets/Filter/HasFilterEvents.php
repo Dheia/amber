@@ -1,11 +1,8 @@
 <?php namespace Larajax\Ui\Widgets\Filter;
 
 /**
- * HasFilterEvents declares the filter's extension points as overridable methods.
- *
- * Larajax UI consumers extend the filter by subclassing and overriding these methods.
- * October's backend filter subclass overrides them to additionally fire global
- * events (e.g. `backend.filter.extendScopes`) for plugin-based extensibility.
+ * HasFilterEvents declares the filter's extension points as methods that a subclass
+ * overrides to extend the filter or fire its own events.
  */
 trait HasFilterEvents
 {

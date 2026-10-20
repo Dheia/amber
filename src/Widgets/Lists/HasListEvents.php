@@ -1,11 +1,8 @@
 <?php namespace Larajax\Ui\Widgets\Lists;
 
 /**
- * HasListEvents declares the list's extension points as overridable methods
- * backed by widget-local events.
- *
- * Larajax UI consumers may either extend the list by subclassing and overriding
- * these methods, or bind callbacks directly to the widget with bindEvent().
+ * HasListEvents declares the list's extension points as overridable methods backed by
+ * widget-local events, so a subclass can override them or callers can use bindEvent().
  */
 trait HasListEvents
 {

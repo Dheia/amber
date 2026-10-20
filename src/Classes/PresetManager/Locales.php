@@ -3,9 +3,6 @@
 /**
  * Locales is a resource file with minimal dependencies
  *
- * Note: October CMS resolves locale labels through its backend language files;
- * Larajax UI inlines the native labels directly.
- *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */

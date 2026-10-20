@@ -1,5 +1,7 @@
 <?php namespace Larajax\Ui\Classes;
 
+use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
+
 /**
  * UiFactory creates view-based UI components.
  *
@@ -49,6 +51,22 @@ class UiFactory
     public static function extendIcons(mixed $extension): IconManager
     {
         return app(IconManager::class)->extend($extension);
+    }
+
+    /**
+     * resolveTimezoneUsing sets the callback that returns the viewer's timezone, used to display dates stored in the app timezone.
+     */
+    public static function resolveTimezoneUsing(?callable $resolver): void
+    {
+        DateTimeHelper::resolveTimezoneUsing($resolver);
+    }
+
+    /**
+     * timezone returns the viewer's timezone.
+     */
+    public static function timezone(): string
+    {
+        return DateTimeHelper::userTimezone();
     }
 
     /**

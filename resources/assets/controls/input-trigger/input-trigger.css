@@ -1,8 +1,5 @@
 /*
- * Trigger API states
- *
- * October defines these in the backend foundation styles; the library carries
- * them with the trigger control that applies them.
+ * Trigger API states, applied by the trigger control
  */
 
 .oc-hide {

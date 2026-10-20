@@ -1,8 +1,10 @@
 <?php namespace Larajax\Ui\Helpers;
 
 use Date;
+use Config;
 use Carbon\Carbon;
 use DateTime as PhpDateTime;
+use DateTimeZone;
 use InvalidArgumentException;
 use Exception;
 
@@ -14,6 +16,66 @@ use Exception;
  */
 class DateTime
 {
+    /**
+     * @var callable|null timezoneResolver returns the timezone of the person viewing the page.
+     */
+    protected static $timezoneResolver;
+
+    /**
+     * resolveTimezoneUsing sets the callback that returns the viewer's timezone, or null to use the app timezone.
+     */
+    public static function resolveTimezoneUsing(?callable $resolver): void
+    {
+        static::$timezoneResolver = $resolver;
+    }
+
+    /**
+     * appTimezone returns the timezone values are stored in.
+     */
+    public static function appTimezone(): string
+    {
+        return Config::get('app.timezone') ?: date_default_timezone_get();
+    }
+
+    /**
+     * userTimezone returns the viewer's timezone, falling back to the app timezone when the resolver gives an invalid one.
+     */
+    public static function userTimezone(): string
+    {
+        $timezone = static::$timezoneResolver ? (static::$timezoneResolver)() : null;
+
+        if ($timezone instanceof DateTimeZone) {
+            return $timezone->getName();
+        }
+
+        if (is_string($timezone) && $timezone !== '') {
+            try {
+                return (new DateTimeZone($timezone))->getName();
+            }
+            catch (Exception $ex) {
+                // Fall back to the app timezone
+            }
+        }
+
+        return static::appTimezone();
+    }
+
+    /**
+     * toUserTimezone converts a stored value to the viewer's timezone.
+     */
+    public static function toUserTimezone($value): Carbon
+    {
+        return self::makeCarbon($value)->copy()->setTimezone(static::userTimezone());
+    }
+
+    /**
+     * fromUserTimezone reads a date and time entered in the viewer's timezone and converts it to the app timezone.
+     */
+    public static function fromUserTimezone(string $value): Carbon
+    {
+        return Date::parse($value, static::userTimezone())->setTimezone(static::appTimezone());
+    }
+
     /**
      * timeSince returns a human readable time difference from the value to the
      * current time. Eg: **10 minutes ago**

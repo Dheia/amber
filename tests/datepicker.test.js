@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, describe, expect, test } from 'bun:test';
+import { afterEach, beforeAll, describe, expect, setSystemTime, test } from 'bun:test';
 import { registerDatepicker } from '../resources/assets/controls/datepicker/datepicker.js';
 
 function parseValue(value) {
@@ -181,5 +181,29 @@ describe('datepicker options', () => {
         dateFacade.disabled = true;
         element.dispatchEvent(new CustomEvent('trigger:disable', { bubbles: true }));
         expect(control.picker).toBeNull();
+    });
+});
+
+describe('datepicker timezone', () => {
+    afterEach(() => {
+        setSystemTime();
+    });
+
+    test('fills the current date and time from the configured timezone clock', () => {
+        setSystemTime(new Date('2026-10-20T14:30:15Z'));
+
+        const first = connectPicker({ attributes: 'data-timezone="Australia/Sydney"' });
+        change(first.timeFacade, '09:15');
+        expect(first.locker.value).toBe('2026-10-21 09:15:00');
+
+        const second = connectPicker({ attributes: 'data-timezone="America/New_York"' });
+        change(second.dateFacade, '2026-10-22');
+        expect(second.locker.value).toBe('2026-10-22 10:30:15');
+    });
+
+    test('an unknown timezone falls back to the browser clock', () => {
+        const { control } = connectPicker({ attributes: 'data-timezone="Mars/Olympus"' });
+
+        expect(control.getNow().date).toBe(control.formatDate(new Date(), 'YYYY-MM-DD'));
     });
 });

@@ -8,10 +8,6 @@
  *
  * Tabs marked with the `tab-lazy` class load their pane contents through the
  * anchor's data-tab-lazy-handler on first activation.
- *
- * Ported from October CMS as a vanilla subset covering the form widget's
- * needs: switching, lazy loading and linkable anchors. October's full
- * control additionally offers closable, scrollable and dynamic tabs.
  */
 'use strict';
 

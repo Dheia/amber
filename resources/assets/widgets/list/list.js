@@ -8,9 +8,6 @@
  * jax.fetchControl(element, 'listwidget')
  * jax.listOnLoadForm(recordId, context) - opens the onLoadPopupForm handler in a popup,
  *   used by the recordOnClick "popup" shorthand
- *
- * Ported from October CMS (october.list.js) as vanilla JS. Not yet ported:
- * drag-scrollable headers (native horizontal scrolling applies instead).
  */
 'use strict';
 

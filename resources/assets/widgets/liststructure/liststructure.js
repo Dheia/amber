@@ -10,9 +10,8 @@
  * - data-indent-size - pixels per tree level
  * - data-max-depth - maximum nesting depth
  *
- * Ported from October CMS (october.liststructure.js) as vanilla JS using
- * pointer events. Tree node toggling posts through plain data-request
- * attributes; this control implements the drag reorder interaction.
+ * Tree node toggling posts through plain data-request attributes; this
+ * control implements the drag reorder interaction with pointer events.
  */
 'use strict';
 

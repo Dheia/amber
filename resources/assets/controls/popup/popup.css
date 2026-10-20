@@ -1,9 +1,8 @@
 /*
  * Popup control styles
  *
- * Ported from October CMS (popup.less). October styles every Bootstrap modal;
- * these rules are scoped to the popup and its loading backdrop so other modals
- * in the application keep Bootstrap's styling.
+ * Scoped to the popup and its loading backdrop so other modals in the
+ * application keep Bootstrap's styling.
  */
 
 .control-popup {

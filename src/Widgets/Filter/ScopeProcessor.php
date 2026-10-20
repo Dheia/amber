@@ -55,10 +55,6 @@ trait ScopeProcessor
     /**
      * processPermissionCheck check if user has permissions to show the scope
      * and removes it if permission is denied
-     *
-     * Note: October CMS checks backend user permissions here (BackendAuth). Larajax UI
-     * runs standalone, so scope permissions map to Laravel gate abilities instead:
-     * the scope is kept when the user passes any of the listed abilities.
      */
     protected function processPermissionCheck(array $scopes): void
     {

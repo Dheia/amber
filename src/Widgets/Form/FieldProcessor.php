@@ -65,10 +65,6 @@ trait FieldProcessor
     /**
      * processPermissionCheck check if user has permissions to show the field
      * and removes it if permission is denied
-     *
-     * Note: October CMS checks backend user permissions here (BackendAuth). Larajax UI
-     * runs standalone, so field permissions map to Laravel gate abilities instead:
-     * the field is kept when the user passes any of the listed abilities.
      */
     protected function processPermissionCheck(array $fields)
     {

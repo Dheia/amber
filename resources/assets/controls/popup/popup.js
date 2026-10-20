@@ -29,9 +29,6 @@
  *     Popup.fromElement(link, { ajax: 'popup-content.htm' });
  *     Popup.getInstance(element).hide();
  *     jax.popup.bindToPopups('#container', { file_id: 1 });
- *
- * Ported from October CMS (popup.js) as vanilla JS. The jQuery plugin and its
- * *.oc.popup events become the static API and popup:* CustomEvents.
  */
 'use strict';
 

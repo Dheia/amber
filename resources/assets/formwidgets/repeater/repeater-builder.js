@@ -4,8 +4,7 @@
  * Data attributes:
  * - data-control="repeaterbuilder" - enables the control on an element
  *
- * Ported from October CMS (repeater.builder.js) as vanilla JS, re-running
- * the header transfer after AJAX updates complete.
+ * The header transfer re-runs after AJAX updates complete.
  */
 'use strict';
 

@@ -11,14 +11,6 @@ use ApplicationException;
 
 /**
  * HasValueProcessor concern
- *
- * Ported from October CMS with these standalone adaptations:
- * - Custom column types via PluginManager are not supported yet.
- * - Datetime columns return the formatted value directly; October wraps them in a
- *   `<time>` element for client-side timezone conversion (Backend::dateTime).
- * - Image columns resize through the file attachment's `getThumb`; media library
- *   paths and the CMS image resizer are not available.
- * - Linkage URLs resolve through Laravel's `url()` helper instead of `Backend::url`.
  */
 trait HasValueProcessor
 {
@@ -239,7 +231,7 @@ trait HasValueProcessor
             return null;
         }
 
-        $dateTime = $this->validateDateTimeValue($value, $column);
+        $dateTime = $this->validateDateTimeValue($value, $column, true);
 
         if ($column->format !== null) {
             $value = $dateTime->format($column->format);
@@ -260,7 +252,7 @@ trait HasValueProcessor
             return null;
         }
 
-        $dateTime = $this->validateDateTimeValue($value, $column);
+        $dateTime = $this->validateDateTimeValue($value, $column, false);
 
         $format = $column->format ?? 'g:i A';
 
@@ -278,7 +270,7 @@ trait HasValueProcessor
             return null;
         }
 
-        $dateTime = $this->validateDateTimeValue($value, $column);
+        $dateTime = $this->validateDateTimeValue($value, $column, false);
 
         if ($column->format !== null) {
             $value = $dateTime->format($column->format);
@@ -313,7 +305,7 @@ trait HasValueProcessor
             return null;
         }
 
-        $dateTime = $this->validateDateTimeValue($value, $column);
+        $dateTime = $this->validateDateTimeValue($value, $column, true);
 
         return DateTimeHelper::timeTense($dateTime);
     }
@@ -440,9 +432,9 @@ trait HasValueProcessor
     }
 
     /**
-     * validateDateTimeValue column type
+     * validateDateTimeValue column type, converted to the viewer's timezone when the column uses it (`$useTimezone` is the type's default).
      */
-    protected function validateDateTimeValue($value, $column)
+    protected function validateDateTimeValue($value, $column, $useTimezone = false)
     {
         $value = DateTimeHelper::makeCarbon($value, false);
 
@@ -451,6 +443,10 @@ trait HasValueProcessor
                 'List column value "%s" is not a valid date time object.',
                 $column->columnName
             ));
+        }
+
+        if ($this->getColumnTimezonePreference($column, $useTimezone)) {
+            $value = DateTimeHelper::toUserTimezone($value);
         }
 
         return $value;

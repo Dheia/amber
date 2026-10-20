@@ -12,7 +12,7 @@
  * - data-timepicker - the visible time facade input (text)
  * - data-datetime-value - the hidden locker input carrying the stored value
  * - data-default-time-midnight - fill a missing time with 00:00 instead of the current time
- * - data-ignore-timezone - accepted for October parity, no conversion happens yet
+ * - data-ignore-timezone - set when the value is not converted to the user's timezone
  *
  * Config (data-* on the wrapper, camelCased by the framework):
  * - format - date display format (YYYY YY MMMM MMM MM M DD Do D dddd ddd, [literal])
@@ -24,15 +24,13 @@
  * - showWeekNumber - show an ISO week-number column
  * - twelveHour - use a 12 hour AM/PM time picker
  * - hoursOnly - pick the hour only, minutes are stored as 00
+ * - timezone - timezone of the displayed values, used for the current date and time fills
  *
  * Events:
  * - trigger:disable - rechecks the readonly/disabled state and binds or unbinds the pickers
  *
- * Standalone divergences from October's toolbox datepicker: no Moment.js, so the
- * formatter and parser above cover the date tokens only and there is no locale
- * default format or Pikaday i18n; timezone conversion waits on the user timezone
- * seam; date-only and time-only fields store just their part, where October
- * always stores a full date and time.
+ * The server renders and reads values in the user's timezone, so the control
+ * never converts them. Date-only and time-only fields store just their part.
  */
 'use strict';
 
@@ -83,7 +81,8 @@ export function registerDatepicker(jax) {
                 firstDay: 0,
                 showWeekNumber: false,
                 twelveHour: false,
-                hoursOnly: false
+                hoursOnly: false,
+                timezone: null
             }, this.config);
 
             this.picker = null;
@@ -209,7 +208,7 @@ export function registerDatepicker(jax) {
             });
         }
 
-        // Aligns the calendar to the right edge of the facade, like October, when it fits on screen.
+        // Aligns the calendar to the right edge of the facade when it fits on screen.
         alignDatePicker() {
             const el = this.picker ? this.picker.el : null;
             if (!el || !this.dateFacade) {
@@ -233,7 +232,7 @@ export function registerDatepicker(jax) {
                 date = this.parseDate(this.dateFacade.value) || (this.picker ? this.picker.getDate() : null);
             }
 
-            return this.formatDate(date || new Date(), DB_DATE_FORMAT);
+            return date ? this.formatDate(date, DB_DATE_FORMAT) : this.getNow().date;
         }
 
         getDateFormat() {
@@ -289,8 +288,45 @@ export function registerDatepicker(jax) {
                 return '00:00:00';
             }
 
+            return this.getNow().time;
+        }
+
+        // Returns the current date (YYYY-MM-DD) and time (HH:mm:ss) in the configured timezone, or the browser's own.
+        getNow() {
             const now = new Date();
-            return pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+            if (this.config.timezone) {
+                try {
+                    const parts = {};
+                    const formatter = new Intl.DateTimeFormat('en-US', {
+                        timeZone: this.config.timezone,
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hourCycle: 'h23'
+                    });
+
+                    for (const part of formatter.formatToParts(now)) {
+                        parts[part.type] = part.value;
+                    }
+
+                    return {
+                        date: parts.year + '-' + parts.month + '-' + parts.day,
+                        time: parts.hour + ':' + parts.minute + ':' + parts.second
+                    };
+                }
+                catch (ex) {
+                    // Unknown timezone, use the browser's
+                }
+            }
+
+            return {
+                date: this.formatDate(now, DB_DATE_FORMAT),
+                time: pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds())
+            };
         }
 
         //

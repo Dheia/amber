@@ -6,9 +6,6 @@ use Larajax\Ui\Classes\PreferenceStore;
 /**
  * PreferenceMaker Trait adds methods for modifying user preferences in a controller class,
  * or a class that contains a `$controller` property referencing a controller.
- *
- * Note: October CMS backs this with the backend user preference model. Larajax UI uses a
- * session-backed store by default; override `getPreferenceStorage` for durable storage.
  */
 trait PreferenceMaker
 {

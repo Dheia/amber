@@ -1,8 +1,6 @@
 /*
  * Date Picker
  * --------------------------------------------------
- * Themes Pikaday's and Clockpicker's base layouts with the --oc-* bridge
- * variables. Ported from October's toolbox.
  */
 
 @import "datepicker.date.css";

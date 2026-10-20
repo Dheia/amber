@@ -10,9 +10,8 @@
  * JavaScript API:
  * jax.fetchControl(element, 'filterwidget')
  *
- * Ported from October CMS (october.filter.js) as vanilla JS. Covers the
- * built-in scope types (checkbox, switch, dropdown) and the popover scope
- * types backed by filter widgets (text, number, date, group).
+ * Covers the built-in scope types (checkbox, switch, dropdown) and the popover
+ * scope types backed by filter widgets (text, number, date, group).
  */
 'use strict';
 
@@ -203,9 +202,8 @@ export function registerFilterWidget(jax) {
             }
         }
 
-        // bindPopoverContent wires the behavior October provides through its
-        // trigger API and filter widget scripts: condition-based visibility,
-        // native date mirrors and group option loading.
+        // bindPopoverContent wires the popover form behavior: condition-based
+        // visibility, native date mirrors and group option loading.
         bindPopoverContent() {
             const root = this.popover.element;
 

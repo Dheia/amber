@@ -40,11 +40,6 @@ abstract class FilterWidgetBase extends WidgetBase
 
     /**
      * __construct
-     *
-     * Note: October's WidgetBase constructor receives the controller; Larajax UI's
-     * widget lifecycle assigns it before registration, so this constructor
-     * wires the controller and invokes register() itself.
-     *
      * @param Controller $controller
      * @param FilterScope $filterScope
      * @param array $configuration

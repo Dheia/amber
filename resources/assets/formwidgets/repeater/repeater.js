@@ -1,8 +1,5 @@
 /*
  * Repeater form widget base class
- *
- * Ported from October CMS (repeater.js) as vanilla JS with pointer-events
- * drag reorder.
  */
 'use strict';
 
@@ -461,7 +458,7 @@ export function createRepeaterFormWidgetBase(jax) {
         }
 
         //
-        // Drag reorder (pointer events port of October's SortableJS binding)
+        // Drag reorder (pointer events)
         //
 
         onPointerDown(ev) {

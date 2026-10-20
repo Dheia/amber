@@ -3,15 +3,10 @@
 use Carbon\Carbon;
 use Larajax\Ui\Classes\FormWidgetBase;
 use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
+use Exception;
 
 /**
  * DatePicker renders a date picker field
- *
- * Ported from October CMS with these standalone adaptations:
- * - Preview mode formats the value on the server; October renders a `<time>` element
- *   that the browser formats (Backend::dateTime).
- * - `useTimezone` is accepted but no conversion happens until the user timezone seam exists.
- * - An array `yearRange` renders as JSON so the picker receives both bounds.
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
@@ -157,12 +152,16 @@ class DatePicker extends FormWidgetBase
     {
         if ($value = $this->getLoadValue()) {
             $value = DateTimeHelper::makeCarbon($value, false);
-            $value = $value instanceof Carbon ? $value->toDateTimeString() : $value;
+
+            if ($value instanceof Carbon && $this->useTimezone) {
+                $value = DateTimeHelper::toUserTimezone($value);
+            }
         }
 
         $this->vars['name'] = $this->getFieldName();
-        $this->vars['value'] = $value ?: '';
+        $this->vars['value'] = $value instanceof Carbon ? $value->toDateTimeString() : ($value ?: '');
         $this->vars['previewValue'] = $this->getPreviewValue($value);
+        $this->vars['timezone'] = $this->useTimezone ? DateTimeHelper::userTimezone() : DateTimeHelper::appTimezone();
         $this->vars['field'] = $this->formField;
         $this->vars['mode'] = $this->mode;
         $this->vars['minDate'] = $this->minDate;
@@ -186,6 +185,15 @@ class DatePicker extends FormWidgetBase
     {
         if (!strlen($value)) {
             return null;
+        }
+
+        if ($this->useTimezone) {
+            try {
+                return DateTimeHelper::fromUserTimezone($value)->toDateTimeString();
+            }
+            catch (Exception $ex) {
+                // Leave values that do not parse for the model to reject
+            }
         }
 
         return $value;
@@ -231,8 +239,7 @@ class DatePicker extends FormWidgetBase
     }
 
     /**
-     * getPreviewValue formats the value for preview mode using the format or the
-     * long locale format for the mode, matching October's client-side aliases.
+     * getPreviewValue formats the value for preview mode using the format or the long locale format for the mode.
      */
     protected function getPreviewValue($value): string
     {

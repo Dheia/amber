@@ -4,6 +4,7 @@ use Db;
 use DbDongle;
 use Date as DateFacade;
 use Larajax\Ui\Classes\FilterWidgetBase;
+use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
 use Exception;
 
 /**
@@ -202,19 +203,26 @@ class Date extends FilterWidgetBase
             'returnObject' => false,
         ], $options));
 
+        // Picked dates are days in the viewer's timezone
+        $timezone = $this->filterScope->useTimezone ? DateTimeHelper::userTimezone() : null;
+
         try {
             if (is_int($value)) {
                 $date = DateFacade::createFromTimestamp($value);
             }
             elseif (strtolower($value) === 'now') {
-                $date = DateFacade::now()->startOfDay();
+                $date = DateFacade::now($timezone)->startOfDay();
             }
             else {
-                $date = DateFacade::parse($value);
+                $date = DateFacade::parse($value, $timezone);
             }
 
             if ($isEndOfDay) {
                 $date = $date->copy()->addDay()->addMinutes(-1);
+            }
+
+            if ($timezone && !$isDateOnly) {
+                $date = $date->copy()->setTimezone(DateTimeHelper::appTimezone());
             }
 
             if ($returnObject) {

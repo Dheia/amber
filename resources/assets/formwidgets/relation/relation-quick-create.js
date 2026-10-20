@@ -10,8 +10,6 @@
  * - data-quick-create-value - value of the "Create New" option (default __quick_create__)
  * - data-popup-size - size of the quick create popup
  * - data-quick-created - set after a record is created, notifies dependent fields
- *
- * Ported from October CMS (relation-quick-create.js) as vanilla JS.
  */
 'use strict';
 
@@ -70,7 +68,7 @@ export function registerRelationQuickCreate(jax) {
             });
         }
 
-        // Updates the Select2 display without firing change, like October's change.select2 trigger
+        // Updates the Select2 display without firing change
         refreshCustomSelect() {
             var customSelect = jax.fetchControl(this.select, 'custom-select');
             if (customSelect && customSelect.$el) {

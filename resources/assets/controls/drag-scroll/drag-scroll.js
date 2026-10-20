@@ -35,8 +35,6 @@
  * - goToElement - moves the scrollable area to an element
  * - pause - pauses drag and scroll
  * - resume - resumes drag and scroll
- *
- * Ported from October CMS as vanilla JS (the original is jQuery-based).
  */
 'use strict';
 

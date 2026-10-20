@@ -4,11 +4,8 @@ use stdClass;
 use October\Rain\Element\ElementHolder;
 
 /**
- * HasFormEvents declares the form's extension points as overridable methods.
- *
- * Larajax UI consumers extend the form by subclassing and overriding these methods.
- * October's backend form subclass overrides them to additionally fire global
- * events (e.g. `backend.form.extendFields`) for plugin-based extensibility.
+ * HasFormEvents declares the form's extension points as methods that a subclass
+ * overrides to extend the form or fire its own events.
  */
 trait HasFormEvents
 {

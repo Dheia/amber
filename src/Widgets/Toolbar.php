@@ -287,11 +287,8 @@ class Toolbar extends WidgetBase
     }
 
     /**
-     * isButtonVisible checks button permissions and resolves a `visible` config value
-     * given as a host controller method name.
-     *
-     * Note: October CMS checks backend user permissions here (BackendAuth). Larajax UI
-     * runs standalone, so button permissions map to Laravel gate abilities instead.
+     * isButtonVisible checks the button's gate abilities and resolves a `visible` config
+     * value given as a host controller method name.
      */
     protected function isButtonVisible(ToolbarButton $button): bool
     {
