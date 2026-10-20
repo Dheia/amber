@@ -23,6 +23,7 @@ const CONTROL_IDS = [
     'liststructurewidget',
     'fileupload',
     'relation-quick-create',
+    'recordfinder',
     'repeateraccordion',
     'repeaterbuilder',
 ];

@@ -30,6 +30,10 @@ class BootstrapIconPack implements IconPack
             'datepicker.date' => 'bi bi-calendar',
             'datepicker.time' => 'bi bi-clock',
 
+            'recordfinder.find' => 'bi bi-search',
+            'recordfinder.remove' => 'bi bi-x-lg',
+            'recordfinder.record' => 'bi bi-link-45deg',
+
             'repeater.add' => 'bi bi-plus-lg',
             'repeater.menu' => 'bi bi-gear',
             'repeater.reorder' => 'bi bi-grip-vertical',

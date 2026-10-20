@@ -30,6 +30,10 @@ class PhosphorIconPack implements IconPack
             'datepicker.date' => 'ph ph-calendar-blank',
             'datepicker.time' => 'ph ph-clock',
 
+            'recordfinder.find' => 'ph ph-magnifying-glass',
+            'recordfinder.remove' => 'ph ph-x',
+            'recordfinder.record' => 'ph ph-link',
+
             'repeater.add' => 'ph ph-plus',
             'repeater.menu' => 'ph ph-gear',
             'repeater.reorder' => 'ph ph-dots-six-vertical',

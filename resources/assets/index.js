@@ -20,6 +20,9 @@
  */
 'use strict';
 
+// AJAX
+import { registerAjax } from './ajax.js';
+
 // Controls
 import { registerLoaderContainer } from './controls/loader-container/loader-container-control.js';
 import { registerSearchInput } from './controls/search-input/search-input-control.js';
@@ -48,6 +51,7 @@ import { registerListStructureWidget } from './widgets/liststructure/liststructu
 // Form widgets
 import { registerFileUpload } from './formwidgets/fileupload/fileupload.js';
 import { registerRelationQuickCreate } from './formwidgets/relation/relation-quick-create.js';
+import { registerRecordFinder } from './formwidgets/recordfinder/recordfinder.js';
 import { registerRepeaterAccordion } from './formwidgets/repeater/repeater-accordion.js';
 import { registerRepeaterBuilder } from './formwidgets/repeater/repeater-builder.js';
 
@@ -85,6 +89,9 @@ export function registerUi(jax) {
         return jax;
     }
 
+    // AJAX
+    registerAjax(jax);
+
     // Controls
     registerLoaderContainer(jax);
     registerSearchInput(jax);
@@ -113,6 +120,7 @@ export function registerUi(jax) {
     // Form widgets
     registerFileUpload(jax);
     registerRelationQuickCreate(jax);
+    registerRecordFinder(jax);
     registerRepeaterAccordion(jax);
     registerRepeaterBuilder(jax);
 

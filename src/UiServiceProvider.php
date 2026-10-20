@@ -110,6 +110,7 @@ class UiServiceProvider extends ServiceProvider
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\Repeater::class, 'repeater');
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\DatePicker::class, 'datepicker');
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\TagList::class, 'taglist');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\RecordFinder::class, 'recordfinder');
         });
 
         app('system.widgets')->registerFilterWidgets(function ($manager) {

@@ -30,6 +30,7 @@
 @import "./controls/popup/popup.css";
 @import "./controls/tab/tab-control.css";
 @import "./controls/toolbar/toolbar-control.css";
+@import "./controls/toolbar/toolbar-buttons.css";
 
 /* Widgets */
 @import "./widgets/form/form.css";
@@ -40,4 +41,5 @@
 
 /* Form widgets */
 @import "./formwidgets/fileupload/fileupload.css";
+@import "./formwidgets/recordfinder/recordfinder.css";
 @import "./formwidgets/repeater/repeater.css";

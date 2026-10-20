@@ -1,5 +1,6 @@
 <?php namespace Larajax\Ui\Classes;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larajax\Ui\Classes\ModelInspector\Inspection;
 use Throwable;
@@ -103,6 +104,41 @@ class ModelInspector
             'morphOne',
             'hasOneThrough'
         ]);
+    }
+
+    /**
+     * setRelationValue sets a relation from a related key, as Rain models do when the
+     * relation is assigned like an attribute.
+     */
+    public function setRelationValue($model, $name, $value): void
+    {
+        $model = $this->makeModel($model);
+
+        if (!is_object($model)) {
+            return;
+        }
+
+        if ($this->hasNativeRelationApi($model)) {
+            $model->{$name} = $value;
+            return;
+        }
+
+        $relation = $this->getRelationObject($model, $name);
+        if (!$relation) {
+            return;
+        }
+
+        if ($relation instanceof BelongsTo) {
+            $relation->associate($value);
+            return;
+        }
+
+        // Other relations hold the matching related record in memory
+        $related = $value !== null && $value !== ''
+            ? $relation->getRelated()->newQuery()->find($value)
+            : null;
+
+        $model->setRelation($name, $related);
     }
 
     /**

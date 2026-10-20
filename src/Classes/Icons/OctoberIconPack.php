@@ -30,6 +30,10 @@ class OctoberIconPack implements IconPack
             'datepicker.date' => 'icon-calendar',
             'datepicker.time' => 'icon-clock',
 
+            'recordfinder.find' => 'icon-common-file-star',
+            'recordfinder.remove' => 'icon-common-file-remove',
+            'recordfinder.record' => 'icon-chain',
+
             'repeater.add' => 'icon-add-bold',
             'repeater.menu' => 'icon-cog',
             'repeater.reorder' => 'icon-list-reorder',
