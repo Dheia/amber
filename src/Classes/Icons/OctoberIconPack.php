@@ -27,6 +27,9 @@ class OctoberIconPack implements IconPack
             'fileupload.attachment' => 'icon-attachment',
             'fileupload.error' => 'ph ph-warning',
 
+            'datepicker.date' => 'icon-calendar',
+            'datepicker.time' => 'icon-clock',
+
             'repeater.add' => 'icon-add-bold',
             'repeater.menu' => 'icon-cog',
             'repeater.reorder' => 'icon-list-reorder',

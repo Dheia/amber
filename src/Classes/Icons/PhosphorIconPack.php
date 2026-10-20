@@ -27,6 +27,9 @@ class PhosphorIconPack implements IconPack
             'fileupload.attachment' => 'ph ph-paperclip',
             'fileupload.error' => 'ph ph-warning',
 
+            'datepicker.date' => 'ph ph-calendar-blank',
+            'datepicker.time' => 'ph ph-clock',
+
             'repeater.add' => 'ph ph-plus',
             'repeater.menu' => 'ph ph-gear',
             'repeater.reorder' => 'ph ph-dots-six-vertical',

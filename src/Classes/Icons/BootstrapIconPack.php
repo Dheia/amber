@@ -27,6 +27,9 @@ class BootstrapIconPack implements IconPack
             'fileupload.attachment' => 'bi bi-paperclip',
             'fileupload.error' => 'bi bi-exclamation-triangle',
 
+            'datepicker.date' => 'bi bi-calendar',
+            'datepicker.time' => 'bi bi-clock',
+
             'repeater.add' => 'bi bi-plus-lg',
             'repeater.menu' => 'bi bi-gear',
             'repeater.reorder' => 'bi bi-grip-vertical',
